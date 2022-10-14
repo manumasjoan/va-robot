@@ -49,39 +49,39 @@ print("Conectado con el robot")
 
 # movimiento de robot
 
-def move(p) :
-    s.send( posiciones[p])
-    time.sleep(2)
+# def move(p) :
+#     s.send( posiciones[p])
+#     time.sleep(2)
 
 
-# deteccion de posiciones ocupadas
-def detect_objects (): 
+# # deteccion de posiciones ocupadas
+# def detect_objects (): 
 
-    timer = 0
+#     timer = 0
 
-    while timer < 2:
-        _, frame = cap.read()
-        frame = cv.flip(frame, 1)
-        area_thresh = 300
-        binary_thresh = 100
-        color_img , binary_img, coords = testingModel.load_and_test(tree, frame, area_thresh, binary_thresh )
-        timer += 1
-        print("Se encontraron objetos en las siguientes coordenadas: " + str(coords))
+#     while timer < 2:
+#         _, frame = cap.read()
+#         frame = cv.flip(frame, 1)
+#         area_thresh = 300
+#         binary_thresh = 100
+#         color_img , binary_img, coords = testingModel.load_and_test(tree, frame, area_thresh, binary_thresh )
+#         timer += 1
+#         print("Se encontraron objetos en las siguientes coordenadas: " + str(coords))
 
-    return coords
+#     return coords
 
-# verifies if position is occupied
+# # verifies if position is occupied
 
-def is_position_occupied(p) :
-    object_coordinates = detect_objects()
-    offset = 80
-    time.sleep(4)
-    x, y = coordenadas_camara.get(str(p))
+# def is_position_occupied(p) :
+#     object_coordinates = detect_objects()
+#     offset = 80
+#     time.sleep(4)
+#     x, y = coordenadas_camara.get(str(p))
 
-    for c in object_coordinates:
-        if (x < c[0] < x+offset and y < c[1] < y+offset) : return True
+#     for c in object_coordinates:
+#         if (x < c[0] < x+offset and y < c[1] < y+offset) : return True
 
-    return False
+#     return False
 
 # MAIN
 
@@ -90,56 +90,59 @@ def is_position_occupied(p) :
 print("Bienvenido! Inicializando el proceso...")
 rob.send_program(str(robotiqgrip.open_gripper()))
 time.sleep(2)
-move("0")
-time.sleep(2)
 
 
 
-while True:
+print("coordenadas del robot:   ",rob.getl())
+
+# s.send(b"movel([0.46500590481655085, -0.46058388788163435, 0.09839999194988708, 0, -3.140227480258244, 0])")
+s.send(b"movel([0.4643665206795065, -0.4629678339572102, 0.057671771082459966, 1.5574400562622028, -2.681515934655728, -0.027809679953007878], 0.5, 0.1,0)\n")
+# s.send(b"movel([0, 0, 0,0,0, 0], 1.2, 0.25,0)\n")
+
+time.sleep(10)
+# while True:
 
 
-    # ELEGIR POSICION DE PARTIDA
+#     # ELEGIR POSICION DE PARTIDA
 
-    while True :
+#     while True :
 
        
-        print("Elija de que posicion agarrar un objeto. Ingrese un numero entre [1] y [4]")
-        p_partida = input()
-        if is_position_occupied(p_partida) :
-            move("5")
-            move(p_partida)
-            print("Cerrando gripper")
-            rob.send_program(str(robotiqgrip.close_gripper()))
-            time.sleep(2)
-            move("5")
-            move("0")
-            time.sleep(2)
-            break
-        print("No hay un objeto en esta posicion, elija otra.")
+#         print("Elija de que posicion agarrar un objeto. Ingrese un numero entre [1] y [4]")
+#         p_partida = input()
+#         if is_position_occupied(p_partida) :
+#             move("5")
+#             move(p_partida)
+#             print("Cerrando gripper")
+#             rob.send_program(str(robotiqgrip.close_gripper()))
+#             time.sleep(2)
+#             move("5")
+#             move("0")
+#             time.sleep(2)
+#             break
+#         print("No hay un objeto en esta posicion, elija otra.")
 
-    while True :
+#     while True :
 
-        print("Elija en que posicion dejar el objeto. Ingrese un numero entre [1] y [4]")
-        p_destino = input()
-        if not is_position_occupied(p_destino) :
-            move("5")
-            move(p_destino)
-            print("Abriendo gripper")
-            rob.send_program(str(robotiqgrip.open_gripper()))
-            time.sleep(2)
-            move("5")
-            move("0")
-            time.sleep(2)
-            break
-        print("Esta posicion ya esta ocupada, elija otra.")
+#         print("Elija en que posicion dejar el objeto. Ingrese un numero entre [1] y [4]")
+#         p_destino = input()
+#         if not is_position_occupied(p_destino) :
+#             move("5")
+#             move(p_destino)
+#             print("Abriendo gripper")
+#             rob.send_program(str(robotiqgrip.open_gripper()))
+#             time.sleep(2)
+#             move("5")
+#             move("0")
+#             time.sleep(2)
+#             break
+#         print("Esta posicion ya esta ocupada, elija otra.")
 
-    print("Ingrese [1] para continuar el proceso, o cualquier otra tecla para finalizarlo:")
-    c = input() 
-    if(c != "1"):
-        break
+#     print("Ingrese [1] para continuar el proceso, o cualquier otra tecla para finalizarlo:")
+#     c = input() 
+#     if(c != "1"):
+#         break
     
 
 print("Proceso finalizado")
-
-exit
 

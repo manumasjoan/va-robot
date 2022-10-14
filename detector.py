@@ -121,7 +121,7 @@ def show_centers(img, origin):
 
     #binary image
     # binary_value = cv.getTrackbarPos('Binary_Trackbar', 'Binary')
-    binary_image = get_binary_image(img, 50)
+    binary_image = get_binary_image(img, 200)
     cv.imshow('Binary', binary_image)
 
     #denoised image
@@ -146,7 +146,10 @@ def show_centers(img, origin):
             M = cv.moments(pto)
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
-            if(math.dist(origin,[cX,cY])>200):
+            if(math.dist(origin,[cX,cY])>300):
+                print("punto   ",cX,cY)
+                print("origen   ",origin)
+
                 cv.drawContours(image=img, contours=[c], contourIdx=-1, color=(0, 255, 0), thickness=3)
                 cv.line(img, origin, [cX,cY], (0, 255, 0), 5)
 
