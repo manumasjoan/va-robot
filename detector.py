@@ -49,7 +49,10 @@ def get_qr_coords(cmtx, dist, points):
     #return empty arrays if rotation and translation values not found
     else: return [], [], []
 
+
 def show_axes(cmtx, dist, img):
+
+
     qr = cv.QRCodeDetector()
 
     #ret_qr, points = qr.detect(img)
@@ -68,23 +71,53 @@ def show_axes(cmtx, dist, img):
         #check axes points are projected to camera view.
         if len(axis_points) > 0:
             axis_points = axis_points.reshape((4,2))
+            cv.circle(img, [int(axis_points[3][0]),int(axis_points[3][1])], 1, (0,255,0), 5)
+
+
+            show_centers(img,(int(axis_points[0][0]),int(axis_points[0][1]) ))
 
             origin = (int(axis_points[0][0]),int(axis_points[0][1]) )
             #cv.line(img, origin, (int(axis_points[1][0]),int(axis_points[1][1]) ), (255,255,0), 5)
             #print("distance1"+ str(distance))
             #print("distance2"+ str(distance2))
 
-            show_centers(img,origin)
+            print(axis_points)
 
-            # for p, c in zip(axis_points[1:], colors[:3]):
-            #     #este p son los puntos 
-            #     p = (int(p[0]), int(p[1]))
-                
-            #     #Sometimes qr detector will make a mistake and projected point will overflow integer value. We skip these cases. 
-            #     if origin[0] > 5*img.shape[1] or origin[1] > 5*img.shape[1]:break
-            #     if p[0] > 5*img.shape[1] or p[1] > 5*img.shape[1]:break
+            ptoA = [int(axis_points[1][0]),int(axis_points[1][1])]
+            ptoB = [int(axis_points[1][0]),int(axis_points[1][1])]
+            print('distanceX', int(axis_points[1][0])-int(axis_points[0][0]))
+            print('distanceY', int(axis_points[2][1])-int(axis_points[0][1]))
 
-            #     cv.line(img, origin, p, c, 5)
+            #cv.line(img, origin, [int(axis_points[2][0]),int(axis_points[2][1])], (0, 255, 0), 5)
+
+
+
+
+
+def get_delta_cam(cmtx, dist, img):
+    qr = cv.QRCodeDetector()
+
+    ret_qr, points = qr.detect(cv.bitwise_not(img))
+
+    if ret_qr:
+
+        axis_points, rvec, tvec = get_qr_coords(cmtx, dist, points)
+
+        colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0,0,0)]
+
+        if len(axis_points) > 0:
+            axis_points = axis_points.reshape((4,2))
+
+            origin = (int(axis_points[0][0]),int(axis_points[0][1]) )
+
+            delta_x = int(axis_points[1][0])-int(axis_points[0][0])
+            delta_y = int(axis_points[2][1])-int(axis_points[0][1])
+
+            print('distance x = ', delta_x)
+            print('distance y = ', delta_y)
+
+            return [delta_x, delta_y], origin
+
 def get_binary_image(image, value):
     gray_image = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
     ret, threshold = cv.threshold(gray_image, value, 255, cv.THRESH_BINARY_INV)
@@ -147,7 +180,7 @@ def show_centers(img, origin):
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
             if(math.dist(origin,[cX,cY])>300):
-                print("punto   ",cX,cY)
+                #("punto   ",cX,cY)
                 print("origen   ",origin)
 
                 cv.drawContours(image=img, contours=[c], contourIdx=-1, color=(0, 255, 0), thickness=3)
@@ -182,6 +215,39 @@ def show_centers(img, origin):
 
         cv.imshow('Binary', cv.bitwise_not(img))
 
+
+def get_centers(img, origin):
+
+    binary_image = get_binary_image(img, 200)
+    cv.imshow('Binary', binary_image)
+
+    #denoised image
+    denoised_image = get_denoised_image(binary_image)
+    cv.imshow('Denoised', denoised_image)
+
+    #contours
+    _, contours, _ = cv.findContours(denoised_image, cv.RETR_TREE, cv.CHAIN_APPROX_NONE)
+
+    centros = [] #inicializo la variable de contornos filtrados
+    for c in contours:
+        area = cv.contourArea(c)
+        if area > 500 and area < 2000:
+
+            pto = c
+            M = cv.moments(pto)
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+
+            if(math.dist(origin,[cX,cY])>300):
+
+                centros.append([cX, cY])
+
+                cv.drawContours(image=img, contours=[c], contourIdx=-1, color=(0, 255, 0), thickness=3)
+                cv.line(img, origin, [cX,cY], (0, 255, 0), 5)
+
+        cv.imshow('Binary', cv.bitwise_not(img))
+
+    return centros
 
 def execute(cmtx, dist, in_source):
     cap = cv.VideoCapture(in_source)
