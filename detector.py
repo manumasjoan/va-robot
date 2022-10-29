@@ -124,7 +124,7 @@ def get_binary_image(image, value):
     return threshold
     
 def get_denoised_image(binary):
-    structuring_element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    structuring_element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (6, 6))
     morph_open = cv.morphologyEx(binary, cv.MORPH_OPEN, structuring_element)
     morph_close = cv.morphologyEx(binary, cv.MORPH_CLOSE, structuring_element)
     return morph_close
@@ -278,4 +278,4 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         input_source = int(sys.argv[1])
 
-    execute(cmtx, dist, input_source)
+    execute(cmtx, dist, 1)
