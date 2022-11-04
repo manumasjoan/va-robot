@@ -1,5 +1,6 @@
 from operator import invert
 from turtle import distance
+from types import NoneType
 from xml.etree.ElementTree import tostring
 import cv2 as cv
 import numpy as np
@@ -59,19 +60,19 @@ time.sleep(5)
 # OPEN GRIPPER
 urscript = robotiqgrip._get_new_urscript()
 
-rob.send_program(str(urscript._set_gripper_position(165)))
+# rob.send_program(str(urscript._set_gripper_position(165)))
 
 
 
-# robotiqgrip.gripper_action(value=165)
+robotiqgrip.gripper_action(value=0)
 
-# robotiqgrip._get_new_urscript()._set_gripper_position(165)
+# robotiqgrip._get_new_urscript()._set_gripper_position(0)
 
-time.sleep(5)
+# time.sleep(5)
 
 cmtx, dist = read_camera_parameters()
 
-INPUT_SOURCE = 1
+INPUT_SOURCE = 0
 
 cap = cv.VideoCapture(INPUT_SOURCE)
 
@@ -97,9 +98,9 @@ while timer < 4:
 
 # PASO 1: Calcular Deltas ---------------------------------
 
-delta_robot = [77, 77] # siempre es igual --> no depende de la camara
+delta_robot = [65, 70] # siempre es igual --> no depende de la camara
 
-origin_robot = [469.10, -462.85] 
+origin_robot = [495.06, -390.95] 
 
 tray_robot = [371.36, 166]
 
@@ -151,7 +152,7 @@ time.sleep(5)
 
 # BAJAR Y AGARRAR LA PIEZA
 
-instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", -0.002, 0, 3.14, 0], 0.1, 0.2)\n"
+instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.002, 0, 3.14, 0], 0.1, 0.2)\n"
 
 s.send(str.encode(instruction))
 
@@ -177,7 +178,7 @@ time.sleep(5)
 
 # BAJA LA PIEZA A LA BANDEJA Y LA SUELTA
 
-instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", -0.003, 0, 3.14, 0], 0.1, 0.2)\n"
+instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.03, 0, 3.14, 0], 0.1, 0.2)\n"
 
 s.send(str.encode(instruction))
 

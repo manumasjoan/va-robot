@@ -97,7 +97,7 @@ def show_axes(cmtx, dist, img):
 def get_delta_cam(cmtx, dist, img):
     qr = cv.QRCodeDetector()
 
-    ret_qr, points = qr.detect(cv.bitwise_not(img))
+    ret_qr, points = qr.detect(get_denoised_image(get_binary_image(img, 220)))
 
     if ret_qr:
 
@@ -124,7 +124,7 @@ def get_binary_image(image, value):
     return threshold
     
 def get_denoised_image(binary):
-    structuring_element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (6, 6))
+    structuring_element = cv.getStructuringElement(cv.MORPH_ELLIPSE, (4, 4))
     morph_open = cv.morphologyEx(binary, cv.MORPH_OPEN, structuring_element)
     morph_close = cv.morphologyEx(binary, cv.MORPH_CLOSE, structuring_element)
     return morph_close
@@ -218,7 +218,7 @@ def show_centers(img, origin):
 
 def get_centers(img, origin):
 
-    binary_image = get_binary_image(img, 200)
+    binary_image = get_binary_image(img, 240)
     cv.imshow('Binary', binary_image)
 
     #denoised image
@@ -278,4 +278,4 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         input_source = int(sys.argv[1])
 
-    execute(cmtx, dist, 1)
+    execute(cmtx, dist, 0)
