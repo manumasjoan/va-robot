@@ -61,8 +61,7 @@ time.sleep(5)
 urscript = robotiqgrip._get_new_urscript()
 
 # rob.send_program(str(urscript._set_gripper_position(165)))
-
-
+urscript._set_gripper_activate()
 
 robotiqgrip.gripper_action(value=0)
 
@@ -104,6 +103,8 @@ origin_robot = [495.06, -390.95]
 
 tray_robot = [371.36, 166]
 
+tray_robot_height = [0, 0.013, 0.026]
+
 fx, fy = [(delta_robot[0]/delta_camara[0]),(delta_robot[1]/delta_camara[1])] # factor de conversion entre las escalas
 
 print("factor de conversion x = ", fx)
@@ -130,76 +131,87 @@ while timer < 5:
 
 # PASO 3: Transformacion de coordenadas
 
-piece_center_camara = centers[0]
+i = 0
 
-piece_center_robot = convert(origin_camara, origin_robot, [fx, fy], piece_center_camara)
+while( i < 3):
 
-print("coords robot: ", piece_center_robot)
+        robotiqgrip.open_gripper()
 
-# PASO 4: Movimiento de robot
+        print("turno: " + str(i))
 
-# s.send(b"movel(p[0.465, -0.4606, 0.0155, 0, 3.14, 0], 0.1, 0.2)\n")
+        piece_center_camara = centers[i]
 
-# time.sleep(5)
+        piece_center_robot = convert(origin_camara, origin_robot, [fx, fy], piece_center_camara)
 
-# MOVER A LA POSICION DE LA PIEZA
+        print("coords robot: ", piece_center_robot)
 
-instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.040, 0, 3.14, 0], 0.1, 0.2)\n"
+        # PASO 4: Movimiento de robot
 
-s.send(str.encode(instruction))
+        # s.send(b"movel(p[0.465, -0.4606, 0.0155, 0, 3.14, 0], 0.1, 0.2)\n")
 
-time.sleep(5)
+        # time.sleep(5)
 
-# BAJAR Y AGARRAR LA PIEZA
+        # MOVER A LA POSICION DE LA PIEZA
 
-instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.002, 0, 3.14, 0], 0.1, 0.2)\n"
+        instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.040, 0, 3.14, 0], 0.5, 0.2)\n"
 
-s.send(str.encode(instruction))
+        s.send(str.encode(instruction))
 
-time.sleep(5)
+        time.sleep(4)
 
-rob.send_program(str(robotiqgrip.gripper_action(255)))
+        # BAJAR Y AGARRAR LA PIEZA
 
-# MOVER ARRIBA
+        instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.002, 0, 3.14, 0], 0.1, 0.2)\n"
 
-instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.1, 0.2)\n"
+        s.send(str.encode(instruction))
 
-s.send(str.encode(instruction))
+        time.sleep(4)
 
-time.sleep(5)
+        robotiqgrip.gripper_action(255)
 
-# MOVER A LA BANDEJA
+        # MOVER ARRIBA
 
-instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.1, 0.2)\n"
+        instruction ="movel(p["+ str(piece_center_robot[0]/1000)+", "+ str(piece_center_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.5,0.2)\n"
 
-s.send(str.encode(instruction))
+        s.send(str.encode(instruction))
 
-time.sleep(5)
+        time.sleep(4)
 
-# BAJA LA PIEZA A LA BANDEJA Y LA SUELTA
+        # MOVER A LA BANDEJA
 
-instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.03, 0, 3.14, 0], 0.1, 0.2)\n"
+        instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.5, 0.2)\n"
 
-s.send(str.encode(instruction))
+        s.send(str.encode(instruction))
 
-time.sleep(5)
+        time.sleep(4)
 
-rob.send_program(str(robotiqgrip.gripper_action(value=165)))
+        # BAJA LA PIEZA A LA BANDEJA Y LA SUELTA
 
-# SUBE
+        print(str(tray_robot_height[i]))
 
-instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.1, 0.2)\n"
+        instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", "+ str(tray_robot_height[i]) +", 0, 3.14, 0], 0.1, 0.2)\n"
 
-s.send(str.encode(instruction))
+        s.send(str.encode(instruction))
 
-time.sleep(5)
+        time.sleep(4)
 
-print("DONE :)")
+        rob.send_program(str(robotiqgrip.gripper_action(value=150)))
 
-# s.send(b"movel(p[0.242, -0.176, 0.08, 0, 3.14, 0], 0.1, 0.1)\n")
+        # SUBE
 
-time.sleep(2)
+        instruction ="movel(p["+ str(tray_robot[0]/1000)+", "+ str(tray_robot[1]/1000) +", 0.1, 0, 3.14, 0], 0.5, 0.2)\n"
 
+        s.send(str.encode(instruction))
+
+        time.sleep(4)
+
+        print("DONE :)")
+
+        # s.send(b"movel(p[0.242, -0.176, 0.08, 0, 3.14, 0], 0.1, 0.1)\n")
+
+        time.sleep(2)
+
+        i += 1
 
 
 

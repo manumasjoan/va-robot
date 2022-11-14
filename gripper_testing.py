@@ -21,11 +21,11 @@ time.sleep(0.5)
 print("Conectado con el robot")
 
 print("abrir gripper")
-rob.send_program(str(robotiqgrip.open_gripper()))
+robotiqgrip.open_gripper()
 
 print("cerrar gripper")
-rob.send_program(str(robotiqgrip.close_gripper()))
+robotiqgrip.close_gripper()
 
 
 print("partial")
-rob.send_program(str(robotiqgrip.gripper_action(165)))
+robotiqgrip.gripper_action(165)
