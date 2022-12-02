@@ -48,10 +48,10 @@ Una vez cumplidos los requerimientos, se puede continuar con la instalación:
    6. Aplicar los cambios 
  6. Correr `ping 192.168.0.16` en la terminal para verificar que la conexión haya sido exitosa.
 ## Set up del ambiente
- 1.Ubicar QR en la esquina de la visión de la cámara de la siguiente manera.
+ 1. Ubicar QR en la esquina de la visión de la cámara de la siguiente manera.
  2. Asegurar que la superficie donde se esta detectando sea negro. Esto se puede hacer pegando una cartulina o tela si la mesa de trabajo es blanca.
  3. Ubicar la bandeja como indica la imagen abajo. Se pueden cambiar las posiciones de bandeja en el código si se quisiera ubicar las piezas en otro lugar.
- 4. Colocar el ‘techo’ sobre el QR, sin tapar la visión de la cámara:
+ 4. Colocar el ‘techo’ sobre el QR, sin tapar la visión de la cámara.
 ## Ejecución
 Una vez que esté todo preparado, se pueden correr los siguientes archivos:
  - __gripper_testing.py__ : testear la conexión del robot y el gripper 
